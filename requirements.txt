@@ -1,0 +1,13 @@
+torch>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+pyyaml>=6.0
+tqdm>=4.65.0
+
+# Optional: RDKit gives a far more complete chemistry toolkit than src/chem.py.
+# Not required -- the parser and descriptors here are self-contained.
+# rdkit>=2023.9.1
+
+# Dev
+pytest>=7.4.0

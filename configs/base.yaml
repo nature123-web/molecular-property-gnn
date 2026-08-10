@@ -1,0 +1,28 @@
+seed: 42
+out_dir: runs/base
+
+data:
+  n_molecules: 3000
+  # scaffold is the honest split for molecular property prediction; random
+  # leaks close analogues into the test set. Run both and compare.
+  split: scaffold          # scaffold | random
+  val_fraction: 0.1
+  test_fraction: 0.1
+  smiles_column: smiles
+  target_column: target
+
+model:
+  hidden_dim: 128
+  n_layers: 4
+  dropout: 0.1
+  # sum for extensive properties (scale with size), mean for intensive ones.
+  readout: mean_max        # sum | mean | max | mean_max
+
+train:
+  epochs: 60
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.00001
+  grad_clip: 1.0
+  early_stopping_patience: 12
+  device: auto
