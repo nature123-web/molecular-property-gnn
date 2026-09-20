@@ -49,6 +49,16 @@ def spearman(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def evaluate(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     y_true = np.asarray(y_true, dtype=np.float64).ravel()
     y_pred = np.asarray(y_pred, dtype=np.float64).ravel()
+    if len(y_true) == 0:
+        # Every metric below reduces over the array (mean, variance, ...),
+        # so an empty batch would otherwise fall through to numpy and raise
+        # a wall of "Mean of empty slice" / "divide by zero" RuntimeWarnings
+        # instead of the same nan-filled report a degenerate non-empty batch
+        # already produces.
+        return {
+            "rmse": float("nan"), "mae": float("nan"), "r2": float("nan"),
+            "pearson": float("nan"), "spearman": float("nan"), "n": 0,
+        }
     return {
         "rmse": rmse(y_true, y_pred),
         "mae": mae(y_true, y_pred),

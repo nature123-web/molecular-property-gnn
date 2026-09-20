@@ -364,7 +364,7 @@ def test_model_can_overfit_a_tiny_set():
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-    assert float(loss) < 0.05
+    assert loss.item() < 0.05
 
 
 # --------------------------------------------------------------------------- #
@@ -510,3 +510,14 @@ def test_rmse_penalises_large_errors():
     one_big = np.zeros(10)
     one_big[0] = 1.0
     assert rmse(y, one_big) > rmse(y, small)
+
+
+def test_evaluate_on_empty_batch_returns_nans_without_warning(recwarn):
+    # An empty validation batch (e.g. a scaffold split fold with no members)
+    # used to fall through to numpy's mean/std over a zero-length array,
+    # which raises a RuntimeWarning per statistic instead of returning the
+    # same nan-filled report a degenerate non-empty batch already gives.
+    results = evaluate(np.array([]), np.array([]))
+    assert results["n"] == 0
+    assert all(np.isnan(results[key]) for key in ("rmse", "mae", "r2", "pearson", "spearman"))
+    assert len(recwarn) == 0
